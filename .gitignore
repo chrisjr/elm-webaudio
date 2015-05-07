@@ -1,0 +1,6 @@
+examples/release/
+build/
+cache/
+*.elmi
+*.elmo
+*.swp
