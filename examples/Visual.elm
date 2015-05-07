@@ -66,10 +66,9 @@ sliderValueClamp = (max -40.0) << (min 40.0)
 controlState =
   { playing = False
   , loadTrack = False
-  , url = Content "https://soundcloud.com/failemotions/gravity-instrumental" (Selection 0 0 Forward)
+  , url = Content "https://soundcloud.com/apparat/arcadia" (Selection 0 0 Forward)
   , btnCnt = 0
   }
-
 -- Update
 
 scaleToFit {w,h} desiredW desiredH = min (desiredW / w) (desiredH / h)
@@ -123,14 +122,16 @@ updateSliders (dim,isdown,pos) state =
      | isdown -> if state.dragging then (updateSelectedSlider pos state) else (selectSlider dim pos state)
      | otherwise -> disableSelectedSlider pos state
 
-updateTrack = 
-    playMediaElement << (withDefault mediaStream << Maybe.map (\url -> setMediaElementSource url mediaStream))
+updateTrack maybeUrl =
+    let setUrl url = setMediaElementSource url mediaStream
+    in withDefault mediaStream <| Maybe.map (playMediaElement << setUrl) maybeUrl
 
 pauseMusic state =
   let _ = pauseMediaElement mediaStream
   in {state | playing <- False, loadTrack <- False}
 
-playMusic state = {state | loadTrack <- True, playing <- True}
+playMusic state = 
+    {state | loadTrack <- True, playing <- True}
 
 toggleMusic state =
   if | state.playing -> pauseMusic state
@@ -159,7 +160,7 @@ controlInput = Signal.map2 (,)
 
 port soundUrl : Signal (Maybe String)
 
--- Render
+-- Renders
 
 renderSlider val selected =
   let handleColor = if selected then lightRed else darkRed
@@ -211,7 +212,6 @@ render (w',h') sliderState controlState freqdata =
     ]
 
 
-
 -- Main
 
 mainMediaStream = updateTrack <~ soundUrl
@@ -227,4 +227,3 @@ main = render <~ Window.dimensions
               ~ mainSliders
               ~ mainControls
               ~ ((\_ -> getByteFrequencyData analyser) <~ Time.every 50.0)
-
