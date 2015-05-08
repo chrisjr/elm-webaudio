@@ -300,17 +300,25 @@ Elm.Native.WebAudio.make = function(elm) {
     return ret;
   };
 
-  buildGetter('AudioBufferFromNode', 'buffer');
-  buildSetter('AudioBufferForNode', 'buffer');
+  buildGetter('getAudioBufferFromNode', 'buffer');
+  values.setAudioBufferForNode = F2(function(value, node) {
+    node._node.buffer = value._buffer;
+    return node;
+  });
+
+
   buildProperty('AudioBufferIsLooping', 'loop');
   buildProperty('AudioBufferLoopStart', 'loopStart');
   buildProperty('AudioBufferLoopEnd', 'loopEnd');
 
   values.startAudioBufferNode = F4(function(when, offset, duration, node) {
-    if (Maybe.isNothing(duration))
-      node._node.start(when, offset);
-    else
-      node._node.start(when, offset, duration._0);
+    switch (duration.ctor) {
+      case "Just":
+        node._node.start(when, offset, duration._0);
+        break;
+      case "Nothing":
+        node._node.start(when, offset);
+    }
     return node;
   });
 
