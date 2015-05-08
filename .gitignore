@@ -1,6 +1,8 @@
 examples/release/
 build/
 cache/
+elm-stuff
+elm.js
 *.elmi
 *.elmo
 *.swp
