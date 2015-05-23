@@ -300,25 +300,21 @@ Elm.Native.WebAudio.make = function(elm) {
     return ret;
   };
 
-  buildGetter('getAudioBufferFromNode', 'buffer');
+  buildGetter('AudioBufferFromNode', 'buffer');
   values.setAudioBufferForNode = F2(function(value, node) {
     node._node.buffer = value._buffer;
     return node;
   });
-
 
   buildProperty('AudioBufferIsLooping', 'loop');
   buildProperty('AudioBufferLoopStart', 'loopStart');
   buildProperty('AudioBufferLoopEnd', 'loopEnd');
 
   values.startAudioBufferNode = F4(function(when, offset, duration, node) {
-    switch (duration.ctor) {
-      case "Just":
-        node._node.start(when, offset, duration._0);
-        break;
-      case "Nothing":
-        node._node.start(when, offset);
-    }
+    if (duration.ctor == "Nothing")
+      node._node.start(when, offset);
+    else
+      node._node.start(when, offset, duration._0);
     return node;
   });
 
@@ -461,6 +457,7 @@ Elm.Native.WebAudio.make = function(elm) {
   /* MediaElementAudioSourceNode */
   values.createHiddenMediaElementAudioSourceNode = function(context) {
     var element = new Audio();
+    element.crossOrigin = "anonymous";
     return A2(values.createMediaElementAudioSourceNode, context, element);
   };
 

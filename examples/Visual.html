@@ -1,15 +1,14 @@
 <!doctype html>
 <html>
-    <head>
-        <title>elm-webaudio soundcloud visualizer</title>
-        <script type="text/javascript" src="/elm.js"></script>
-        <script type="text/javascript" src="soundcloud_api_key.js"></script>
-        <script src="http://connect.soundcloud.com/sdk.js"></script>
-    </head>
-    <body>
-        <script type="text/javascript">
-         var visual = Elm.fullscreen(Elm.Visual, {soundUrl: null});
-         var soundcloudClientId = soundcloudClientId || null;
+  <head>
+    <title>elm-webaudio soundcloud visualizer</title>
+    <script type="text/javascript" src="Visual.js"></script>
+    <script src="http://connect.soundcloud.com/sdk.js"></script>
+    <style>html, body { margin: 0; padding: 0; }</style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var visual = Elm.fullscreen(Elm.Visual, {soundUrl: null});
 
          if (soundcloudClientId == null) {
              alert("Please create soundcloud_api_key.js to contain your SoundCloud" +

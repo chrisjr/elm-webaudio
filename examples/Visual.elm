@@ -66,9 +66,10 @@ sliderValueClamp = (max -40.0) << (min 40.0)
 controlState =
   { playing = False
   , loadTrack = False
-  , url = Content "https://soundcloud.com/apparat/arcadia" (Selection 0 0 Forward)
+  , url = Content "https://soundcloud.com/failemotions/gravity-instrumental" (Selection 0 0 Forward)
   , btnCnt = 0
   }
+
 -- Update
 
 scaleToFit {w,h} desiredW desiredH = min (desiredW / w) (desiredH / h)
@@ -122,9 +123,8 @@ updateSliders (dim,isdown,pos) state =
      | isdown -> if state.dragging then (updateSelectedSlider pos state) else (selectSlider dim pos state)
      | otherwise -> disableSelectedSlider pos state
 
-updateTrack maybeUrl =
-    let setUrl url = setMediaElementSource url mediaStream
-    in withDefault mediaStream <| Maybe.map (playMediaElement << setUrl) maybeUrl
+updateTrack = 
+    playMediaElement << withDefault mediaStream << Maybe.map (\url -> setMediaElementSource url mediaStream)
 
 pauseMusic state =
   let _ = pauseMediaElement mediaStream
@@ -195,9 +195,9 @@ renderAnalyser w h freqdata =
       let barHeight = h * toFloat datum / 255.0
       in rect barWidth barHeight |> filled orange |> move ((toFloat idx + 0.5) * barWidth,(barHeight - h) / 2.0)
   in
-    groupTransform (translation (0 - w / 2.0) (h / -2.0)) <| List.indexedMap (flip draw) freqdata
+    groupTransform (translation (0 - w / 2.0) (h / -2.0)) <| List.indexedMap draw freqdata
 
-render (w',h') sliderState controlState freqdata =
+render (w',h') sliderState controlState freqdata _ =
   let
     (w,h) = (toFloat w', toFloat h')
     halfw = w / 2.0
@@ -227,3 +227,5 @@ main = render <~ Window.dimensions
               ~ mainSliders
               ~ mainControls
               ~ ((\_ -> getByteFrequencyData analyser) <~ Time.every 50.0)
+              ~ mainMediaStream
+
