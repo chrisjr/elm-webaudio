@@ -184,6 +184,7 @@ These nodes are currently unimplemented.
 -}
 
 import Native.WebAudio
+import Task
 
 
 
@@ -876,6 +877,6 @@ setVelocity : Float -> Float -> Float -> PannerNode -> PannerNode
 setVelocity = Native.WebAudio.setVelocity
 
 
+connect = Task.andThen
 
-{-| TODO: Type of a ScriptProcessorNode -}
-{-| TODO: Type of a WaveShaperNode -}
+(>>=) = connect
