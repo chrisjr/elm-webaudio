@@ -42,6 +42,7 @@ type Action
     = NoOp
     | NewEnv Envelope
     | NewSeed Seed
+    | BufferLoaded AudioBuffer
 
 defaultEnvelope : Envelope
 defaultEnvelope = { attack = 0.4, release = 0.4 }
@@ -169,10 +170,11 @@ update action state =
     case action of
       NewSeed s -> { state | seed <- s }
       NewEnv e -> { state | envelope <- e }
+      BufferLoaded buf -> { state | buffer <- Just buf }
       NoOp -> state
 
-mkState state buf mousePos winDims = 
-    { state | buffer <- buf, mousePos <- mousePos, dims <- winDims }
+mkState state mousePos winDims = 
+    { state | mousePos <- mousePos, dims <- winDims }
 
 doAudio state =
     triggerGrains 8 state
@@ -183,8 +185,10 @@ actions = Signal.mailbox NoOp
 -- Signals
 
 -- guitar sample from Sub-d: https://www.freesound.org/people/Sub-d/sounds/49656/
-audioBuffer : Signal (Maybe AudioBuffer)
-audioBuffer = loadAudioBufferFromUrl DefaultContext "guitar.mp3"
+port audioBuffer : Task err ()
+port audioBuffer =
+    loadAudioBufferFromUrl DefaultContext "guitar.mp3" `Task.andThen`
+    \x -> Signal.send actions.address (BufferLoaded x)
 
 controlState : Signal State
 controlState = Signal.foldp update defaultState actions.signal
@@ -194,7 +198,6 @@ grainTrigger = every (100 * millisecond)
 
 state : Signal State
 state = mkState <~ controlState 
-        ~ audioBuffer
         ~ Mouse.position
         ~ Window.dimensions
 

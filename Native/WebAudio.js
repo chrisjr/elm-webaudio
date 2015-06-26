@@ -6,6 +6,7 @@ Elm.Native.WebAudio.make = function(elm) {
 
   var Maybe = Elm.Maybe.make(elm);
   var Signal = Elm.Signal.make(elm);
+  var Task = Elm.Native.Task.make(elm);
   var List = Elm.Native.List.make(elm);
   var toArray = List.toArray;
   var fromArray = List.fromArray;
@@ -106,17 +107,25 @@ Elm.Native.WebAudio.make = function(elm) {
   };
 
   values.loadAudioBufferFromUrl = F2(function(context, url) {
-    var signal = Signal.constant(Maybe.Nothing);
-    var request = new XMLHttpRequest();
-    request.open('GET', url, true);
-    request.responseType = 'arraybuffer';
-    request.onload = function() {
-      extractContext(context).decodeAudioData(request.response, function(buffer) {
-        elm.notify(signal.id, Maybe.Just(values.createAudioBuffer(buffer)));
+      return Task.asyncFunction(function (callback) {
+          var request = new XMLHttpRequest();
+          request.open('GET', url, true);
+          request.responseType = 'arraybuffer';
+          request.addEventListener('error', function() {
+			  return callback(Task.fail({ ctor: 'RawNetworkError' }));
+		  });
+
+		  request.addEventListener('timeout', function() {
+			  return callback(Task.fail({ ctor: 'RawTimeout' }));
+		  });
+
+		  request.addEventListener('load', function() {
+              extractContext(context).decodeAudioData(request.response, function(buffer) {
+			      return callback(Task.succeed(values.createAudioBuffer(buffer)));
+		      });
+          });
+          request.send();
       });
-    };
-    request.send();
-    return signal;
   });
 
   values.getBufferSampleRate = function(buffer) {

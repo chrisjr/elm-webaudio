@@ -184,7 +184,7 @@ These nodes are currently unimplemented.
 -}
 
 import Native.WebAudio
-import Task
+import Task exposing (Task)
 
 
 
@@ -291,7 +291,7 @@ cancelScheduledValues = Native.WebAudio.cancelScheduledValues
 type AudioBuffer = AudioBuffer
 
 {-| Load an Audio Buffer from a URL -}
-loadAudioBufferFromUrl: AudioContext -> String -> Signal (Maybe AudioBuffer)
+loadAudioBufferFromUrl: AudioContext -> String -> Task err AudioBuffer
 loadAudioBufferFromUrl = Native.WebAudio.loadAudioBufferFromUrl
 
 {-| Retrieve the sample rate of the AudioBuffer -}
