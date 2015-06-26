@@ -604,7 +604,7 @@ getMaxChannelCount = Native.WebAudio.getMaxChannelCount
 
 
 
-{-| TODO: Type of an AudioWorkerNode -}
+{- TODO: Type of an AudioWorkerNode -}
 
 
 
@@ -656,7 +656,7 @@ createChannelSplitterNode = Native.WebAudio.createChannelSplitterNode
 
 
 
-{-| TODO: Type of a ConvolverNode -}
+{- TODO: Type of a ConvolverNode -}
 
 
 
@@ -723,8 +723,8 @@ pauseMediaElement = Native.WebAudio.pauseMediaElement
 
 
 
-{-| TODO: Type of a MediaStreamAudioDestinationNode -}
-{-| TODO: Type of a MediaStreamAudioSourceNode -}
+{- TODO: Type of a MediaStreamAudioDestinationNode -}
+{- TODO: Type of a MediaStreamAudioSourceNode -}
 
 
 

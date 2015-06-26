@@ -130,7 +130,8 @@ pauseMusic state =
   let _ = pauseMediaElement mediaStream
   in {state | playing <- False, loadTrack <- False}
 
-playMusic state = {state | loadTrack <- True, playing <- True}
+playMusic state = 
+    {state | loadTrack <- True, playing <- True}
 
 toggleMusic state =
   if | state.playing -> pauseMusic state
@@ -159,7 +160,7 @@ controlInput = Signal.map2 (,)
 
 port soundUrl : Signal (Maybe String)
 
--- Render
+-- Renders
 
 renderSlider val selected =
   let handleColor = if selected then lightRed else darkRed
@@ -209,7 +210,6 @@ render (w',h') sliderState controlState freqdata _ =
     , renderAnalyser w halfh freqdata
     , renderControls w controlState
     ]
-
 
 
 -- Main
